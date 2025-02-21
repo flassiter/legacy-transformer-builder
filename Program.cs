@@ -4,189 +4,176 @@ using Amazon.BedrockRuntime.Model;
 using Amazon.Runtime;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
-public class Content
+namespace legacy_transformer_builder
 {
-    public string? Type { get; set; }
-    public string? Text { get; set; }
-}
 
-public class BedrockResponse
-{
-    public string? Id { get; set; }
-    public string? Type { get; set; }
-    public string? Role { get; set; }
-    public string? Model { get; set; }
-    public List<Content>? Content { get; set; }
-    public string? StopReason { get; set; }
-    public object? StopSequence { get; set; }
-    public Usage? Usage { get; set; }
-}
-
-public class Usage
-{
-    public int InputTokens { get; set; }
-    public int OutputTokens { get; set; }
-}
-
-public class Metadata
-{
-    public string? ObjectName { get; set; }
-    public string? ObjectType { get; set; }
-    public string? ObjectAttribute { get; set; }
-    public string? ObjectFamily { get; set; }
-    public string? ObjectDescription { get; set; }
-    public DateTime ObjectFirstDefined { get; set; }
-    public DateTime ObjectLastTouched { get; set; }
-    public int ObjectDependencyCount { get; set; }
-    public int ObjectReferencedByCount { get; set; }
-}
-
-public class RootObject
-{
-    public required Metadata Metadata { get; set; }
-    public required string SourceCode { get; set; }
-}
-
-public class CodeAnalyzer
-{
-    public static async Task Main(string[] args)
+    public class Builder
     {
-        // Build configuration with fallback options
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables() // Fallback to environment variables
-            .Build();
-
-        // Access configuration values with defaults
-        string sourceFolderPath = configuration["SourceFolderPath"] ?? "./source";
-        string outputFolderPath = configuration["OutputFolderPath"] ?? "./output";
-        string archiveFolderPath = configuration["ArchiveFolderPath"] ?? "./archive";
-
-        // Log configuration values for debugging
-        Console.WriteLine($"Using source folder: {sourceFolderPath}");
-        Console.WriteLine($"Using output folder: {outputFolderPath}");
-        Console.WriteLine($"Using archive folder: {archiveFolderPath}");
-
-        EnsureDirectoryExists(outputFolderPath);
-        EnsureDirectoryExists(archiveFolderPath);
-
-        await ProcessFiles(sourceFolderPath, outputFolderPath, archiveFolderPath, configuration);
-    }
-
-    private static void EnsureDirectoryExists(string path)
-    {
-        if (!Directory.Exists(path))
+        public static async Task Main(string[] args)
         {
-            Directory.CreateDirectory(path);
+            // Build configuration with fallback options
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables() // Fallback to environment variables
+                .Build();
+
+            // Access configuration values with defaults
+            string sourceFolderPath = configuration["SourceFolderPath"] ?? "./source";
+            string outputFolderPath = configuration["OutputFolderPath"] ?? "./output";
+            string archiveFolderPath = configuration["ArchiveFolderPath"] ?? "./archive";
+            string enterpriseDomainsJSON = configuration["EnterpriseDomainsJSON"] ?? "enterpriseDomains.json";
+            string modelPrompt = configuration["ModelPrompt"] ?? "Analyze this code and provide a detailed report:";
+
+            // Log configuration values for debugging
+            Console.WriteLine($"Using source folder: {sourceFolderPath}");
+            Console.WriteLine($"Using output folder: {outputFolderPath}");
+            Console.WriteLine($"Using archive folder: {archiveFolderPath}");
+
+            EnsureDirectoryExists(outputFolderPath);
+            EnsureDirectoryExists(archiveFolderPath);
+
+            // Read domains for model prompt
+            string enterpriseDomainsJSONString = await File.ReadAllTextAsync(enterpriseDomainsJSON);
+
+            await ProcessFiles(sourceFolderPath, outputFolderPath, archiveFolderPath, modelPrompt, enterpriseDomainsJSONString);
         }
-    }
 
-    private static async Task ProcessFiles(string sourceFolderPath, string outputFolderPath, string archiveFolderPath, IConfiguration configuration)
-    {
-        string[] files = Directory.GetFiles(sourceFolderPath);
-        Console.WriteLine($"Found {files.Length} files to process");
-
-        foreach (string filePath in files)
+        private static void EnsureDirectoryExists(string path)
         {
-            await ProcessFile(filePath, outputFolderPath, archiveFolderPath, configuration);
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
         }
-    }
 
-    private static async Task ProcessFile(string filePath, string outputFolderPath, string archiveFolderPath, IConfiguration configuration)
-    {
-        string fileName = Path.GetFileName(filePath);
-        string outputFilePath = Path.Combine(outputFolderPath, Path.GetFileNameWithoutExtension(fileName) + ".json");
-        string archiveFilePath = Path.Combine(archiveFolderPath, fileName);
-        
-
-        try
+        private static async Task ProcessFiles(string sourceFolderPath, string outputFolderPath, string archiveFolderPath, string modelPrompt, string enterpriseDomainsJSONString)
         {
-            Console.WriteLine($"Processing file: {filePath}");
+            string[] files = Directory.GetFiles(sourceFolderPath);
+            Console.WriteLine($"Found {files.Length} files to process");
 
-            // 1. Read and deserialize the file
-            string jsonString = await File.ReadAllTextAsync(filePath);
-            RootObject jsonObject = JsonConvert.DeserializeObject<RootObject>(jsonString);
-
-
-            var credentials = new StoredProfileAWSCredentials("innovate");
-            var config = new AmazonBedrockRuntimeConfig
+            foreach (string filePath in files)
             {
-                RegionEndpoint = RegionEndpoint.USEast1
-            };
+                await ProcessFile(filePath, outputFolderPath, archiveFolderPath, modelPrompt, enterpriseDomainsJSONString);
+            }
+        }
 
-            using var client = new AmazonBedrockRuntimeClient(credentials, config);
+        private static async Task ProcessFile(string filePath, string outputFolderPath, string archiveFolderPath, string modelPrompt, string enterpriseDomainsJSONString)
+        {
+            string fileName = Path.GetFileName(filePath);
+            string outputFilePath = Path.Combine(outputFolderPath, Path.GetFileNameWithoutExtension(fileName) + ".json");
+            string archiveFilePath = Path.Combine(archiveFolderPath, fileName);
 
-            
-            // 5. Prepare the request with updated format for Claude 3
-            var requestBody = new
+            try
             {
-                anthropic_version = "bedrock-2023-05-31",
-                max_tokens = 4000,
-                messages = new[]
+
+                // -- Read and deserialize the source file
+                Console.WriteLine($"Processing file: {filePath}");
+                string requestFileString = await File.ReadAllTextAsync(filePath);
+
+                // -- Build prompt
+                AnalysisRequest analysisRequest = JsonConvert.DeserializeObject<AnalysisRequest>(requestFileString);
+                analysisRequest.EnterpriseDomainsJSON = enterpriseDomainsJSONString;
+                var analysisRequestString = JsonConvert.SerializeObject(analysisRequest);
+                modelPrompt = modelPrompt + "//n//n" + analysisRequestString + "//n//n";
+
+                // -- Connect to AWS Bedrock
+                var credentials = new StoredProfileAWSCredentials("innovate");
+                var config = new AmazonBedrockRuntimeConfig
                 {
+                    RegionEndpoint = RegionEndpoint.USEast1
+                };
+
+                using var client = new AmazonBedrockRuntimeClient(credentials, config);
+
+                // -- Prepare the request
+                var requestBody = new
+                {
+                    anthropic_version = "bedrock-2023-05-31",
+                    max_tokens = 4000,
+                    messages = new[]
+                    {
                     new
                     {
                         role = "user",
-                        content = $"Analyze this code and provide a detailed report:\n\n{jsonObject.SourceCode}\n\n"
+                        content = modelPrompt
                     }
                 }
-            };
+                };
 
-            string bodyString = JsonConvert.SerializeObject(requestBody);
-            using var bodyStream = new MemoryStream(Encoding.UTF8.GetBytes(bodyString));
+                string requestJSONString = JsonConvert.SerializeObject(requestBody);
+                using var requestJSONStream = new MemoryStream(Encoding.UTF8.GetBytes(requestJSONString));
 
-            var request = new InvokeModelRequest
+                // -- Submit the request to AWS Bedrock
+                var request = new InvokeModelRequest
+                {
+                    ModelId = "anthropic.claude-v2",
+                    Body = requestJSONStream,
+                    ContentType = "application/json",
+                    Accept = "application/json"
+                };
+
+                Console.WriteLine("Sending request to Bedrock...");
+                InvokeModelResponse response = await client.InvokeModelAsync(request);
+
+                // -- Receive and parse response from Bedrock
+                string responseBodyJson = new StreamReader(response.Body).ReadToEnd();
+                BedrockResponse bedrockResponse = JsonConvert.DeserializeObject<BedrockResponse>(responseBodyJson);
+                string analysisText = bedrockResponse.Content[0].Text;
+
+                var extractedJsonString = ExtractJsonString(analysisText);
+                AnalysisResponse analysisResponse = JsonConvert.DeserializeObject<AnalysisResponse>(extractedJsonString);
+
+
+                // -- Create output response
+                var output = new Output
+                {
+                    ObjectName = analysisResponse.ObjectName,
+                    ObjectType = analysisResponse.ObjectType,
+                    LevelOneDomain = analysisResponse.LevelOneDomain,
+                    LevelTwoDomain = analysisResponse.LevelTwoDomain,
+                    Documentation = analysisResponse.Documentation.Description
+
+                };
+
+                string outputJsonString = JsonConvert.SerializeObject(output, new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented
+                });
+                await File.WriteAllTextAsync(outputFilePath, outputJsonString);
+                Console.WriteLine($"LLM output written to: {outputFilePath}");
+
+                // 10. Move the processed file to the archive
+                File.Move(filePath, archiveFilePath, overwrite: true);
+                Console.WriteLine($"File moved to archive: {archiveFilePath}");
+            }
+            catch (Exception ex)
             {
-                ModelId = "anthropic.claude-v2",
-                Body = bodyStream,
-                ContentType = "application/json",
-                Accept = "application/json"
-            };
-
-            
-            Console.WriteLine("Sending request to Bedrock...");
-            InvokeModelResponse response = await client.InvokeModelAsync(request);
-            string responseBodyJson = new StreamReader(response.Body).ReadToEnd();
-
-            
-            var responseData = JsonConvert.DeserializeObject<dynamic>(responseBodyJson);
-            string llmOutput = "";
-
-            // Deserialize the JSON response
-            BedrockResponse responseObject = JsonConvert.DeserializeObject<BedrockResponse>(responseBodyJson);
-
-            string analysisText = responseObject.Content[0].Text;
-
-            // 8. Construct the output JSON
-            var outputJson = new
-            {
-                Metadata = jsonObject.Metadata,
-                Analysis = analysisText
-            };
-
-            // 9. Serialize and save the output
-            string outputJsonString = JsonConvert.SerializeObject(outputJson, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            });
-            await File.WriteAllTextAsync(outputFilePath, outputJsonString);
-            Console.WriteLine($"LLM output written to: {outputFilePath}");
-
-            // 10. Move the processed file to the archive
-            File.Move(filePath, archiveFilePath, overwrite: true);
-            Console.WriteLine($"File moved to archive: {archiveFilePath}");
+                Console.WriteLine($"Error processing file: {filePath}");
+                Console.WriteLine($"Exception: {ex.GetType().Name}: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
         }
-        catch (Exception ex)
+
+        public static string ExtractJsonString(string text)
         {
-            Console.WriteLine($"Error processing file: {filePath}");
-            Console.WriteLine($"Exception: {ex.GetType().Name}: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            // Use a regular expression to find the JSON within a code block or directly
+            string jsonPattern = @"```json\s*({[\s\S]*?})\s*```|({[\s\S]*?})";
+            Match match = Regex.Match(text, jsonPattern);
+
+            if (match.Success)
+            {
+                string jsonString = match.Groups[1].Value; // Try the code block match first
+                if (string.IsNullOrEmpty(jsonString))
+                {
+                    jsonString = match.Groups[2].Value; // If code block fails, try direct match
+                }
+                return jsonString;
+            }
+            return null;
         }
     }
 }
