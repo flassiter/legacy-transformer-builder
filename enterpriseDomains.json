@@ -1,582 +1,122 @@
 {
   "business_domains": {
     "manufacturing_homes": {
-      "production_operations": {
-        "assembly_management": "Managing home construction processes",
-        "production_scheduling": "Planning manufacturing timelines",
-        "quality_control": "Ensuring product quality standards",
-        "workflow_optimization": "Improving production efficiency",
-        "plant_operations": "Managing facility operations"
-      },
-      "supply_chain_management": {
-        "materials_procurement": "Sourcing and purchasing materials",
-        "inventory_management": "Managing raw materials and parts",
-        "supplier_relations": "Managing vendor relationships",
-        "logistics_coordination": "Coordinating material movement",
-        "demand_planning": "Forecasting material needs"
-      },
-      "engineering": {
-        "product_design": "Designing home models and features",
-        "specifications_management": "Managing building specifications",
-        "technical_documentation": "Managing engineering documents",
-        "compliance_engineering": "Ensuring building code compliance",
-        "design_improvement": "Enhancing existing designs"
-      },
-      "quality_assurance": {
-        "inspection_management": "Managing quality inspections",
-        "testing_protocols": "Managing product testing",
-        "defect_management": "Handling quality issues",
-        "certification_management": "Managing product certifications",
-        "standards_compliance": "Meeting industry standards"
-      },
-      "materials_management": {
-        "raw_materials": "Managing construction materials",
-        "components_management": "Managing manufactured parts",
-        "waste_management": "Managing material waste",
-        "storage_operations": "Managing material storage",
-        "inventory_control": "Tracking material usage"
-      },
-      "workforce_management": {
-        "labor_planning": "Managing workforce needs",
-        "safety_management": "Ensuring workplace safety",
-        "training_administration": "Managing worker training",
-        "productivity_monitoring": "Tracking worker performance",
-        "compliance_management": "Managing labor regulations"
-      },
-      "facility_management": {
-        "equipment_maintenance": "Managing manufacturing equipment",
-        "facility_maintenance": "Managing plant facilities",
-        "utility_management": "Managing facility utilities",
-        "space_optimization": "Managing facility layout",
-        "environmental_control": "Managing facility environment"
-      },
-      "product_innovation": {
-        "research_development": "Developing new products",
-        "materials_research": "Researching new materials",
-        "process_improvement": "Improving manufacturing methods",
-        "technology_integration": "Implementing new technologies",
-        "sustainability_initiatives": "Developing green solutions"
-      },
-      "regulatory_compliance": {
-        "building_codes": "Meeting construction standards",
-        "safety_regulations": "Meeting safety requirements",
-        "environmental_compliance": "Meeting environmental standards",
-        "certification_management": "Managing required certifications",
-        "documentation_management": "Managing compliance records"
-      },
-      "cost_management": {
-        "production_costing": "Managing manufacturing costs",
-        "materials_costing": "Managing material costs",
-        "labor_costing": "Managing labor costs",
-        "overhead_management": "Managing facility costs",
-        "efficiency_analysis": "Analyzing cost performance"
-      }
+      "production_operations": {},
+      "supply_chain_management": {},
+      "engineering": {},
+      "quality_assurance": {},
+      "materials_management": {},
+      "workforce_management": {},
+      "facility_management": {},
+      "product_innovation": {},
+      "regulatory_compliance": {},
+      "cost_management": {}
+    },
+    "retail": {
+      "sales_operations": {},
+      "retail_finance": {},
+      "dealer_operations": {},
+      "customer_service": {},
+      "marketing_management": {},
+      "compliance_management": {},
+      "site_preparation": {},
+      "transportation_services": {},
+      "sales_training": {},
+      "performance_management": {}
     },
     "homeowner_insurance": {
-      "policy_administration": {
-        "policy_issuance": "Creating and issuing insurance policies",
-        "coverage_management": "Managing insurance coverage types and limits",
-        "premium_calculation": "Determining insurance rates and premiums",
-        "policy_maintenance": "Managing policy changes and updates",
-        "renewal_processing": "Managing policy renewal activities"
-      },
-      "risk_assessment": {
-        "property_evaluation": "Evaluating property characteristics and risks",
-        "underwriting": "Assessing and pricing insurance risk",
-        "hazard_analysis": "Evaluating environmental and location risks",
-        "inspection_management": "Managing property inspections",
-        "risk_monitoring": "Ongoing monitoring of insured risks"
-      },
-      "claims_management": {
-        "claims_intake": "Receiving and recording claims",
-        "claims_investigation": "Evaluating claim validity and extent",
-        "damage_assessment": "Evaluating property damage",
-        "claims_settlement": "Processing claim payments",
-        "recovery_management": "Managing salvage and subrogation"
-      },
-      "customer_service": {
-        "policyholder_support": "Supporting customer inquiries",
-        "documentation_management": "Managing policy documents",
-        "complaint_handling": "Resolving customer issues",
-        "communication_management": "Managing customer communications",
-        "self_service": "Managing customer portals"
-      },
-      "financial_management": {
-        "premium_accounting": "Managing premium collection and recording",
-        "claims_accounting": "Managing claims payments",
-        "reinsurance_management": "Managing reinsurance arrangements",
-        "reserve_management": "Managing loss reserves",
-        "investment_management": "Managing insurance funds"
-      },
-      "compliance_management": {
-        "regulatory_compliance": "Meeting insurance regulations",
-        "reporting_compliance": "Managing regulatory reporting",
-        "rate_compliance": "Managing rate filing requirements",
-        "audit_management": "Managing internal and external audits",
-        "licensing_management": "Managing insurance licenses"
-      },
-      "catastrophe_management": {
-        "disaster_planning": "Planning for catastrophic events",
-        "emergency_response": "Managing disaster response",
-        "surge_capacity": "Managing high claims volume",
-        "communication_coordination": "Managing disaster communications",
-        "recovery_operations": "Managing post-disaster operations"
-      },
-      "agent_management": {
-        "agent_support": "Supporting insurance agents",
-        "commission_management": "Managing agent compensation",
-        "performance_monitoring": "Tracking agent performance",
-        "training_management": "Managing agent training",
-        "compliance_oversight": "Managing agent compliance"
-      },
-      "data_analytics": {
-        "risk_analytics": "Analyzing insurance risks",
-        "claims_analytics": "Analyzing claims patterns",
-        "fraud_detection": "Identifying suspicious activities",
-        "pricing_analytics": "Analyzing premium adequacy",
-        "portfolio_analytics": "Analyzing insurance portfolio"
-      },
-      "vendor_management": {
-        "contractor_networks": "Managing repair contractors",
-        "adjuster_management": "Managing claims adjusters",
-        "service_provider_oversight": "Managing service providers",
-        "performance_monitoring": "Tracking vendor performance",
-        "cost_management": "Managing vendor expenses"
-      }
+      "policy_administration": {},
+      "risk_assessment": {},
+      "claims_management": {},
+      "customer_service": {},
+      "financial_management": {},
+      "compliance_management": {},
+      "catastrophe_management": {},
+      "agent_management": {},
+      "data_analytics": {},
+      "vendor_management": {}
     },
     "finance": {
-      "loan_servicing": {
-        "payment_processing": "Managing loan payments and posting",
-        "escrow_administration": "Managing tax and insurance accounts",
-        "customer_service": "Supporting borrower inquiries and requests",
-        "default_management": "Handling delinquent accounts and loss mitigation",
-        "investor_reporting": "Reporting to loan owners and investors"
-      },
-      "collections_management": {
-        "delinquency_monitoring": "Tracking late payments",
-        "loss_mitigation": "Working with borrowers to prevent losses",
-        "foreclosure_management": "Managing default proceedings",
-        "bankruptcy_administration": "Handling bankruptcy cases",
-        "recovery_operations": "Pursuing defaulted loan collection"
-      },
-      "insurance_operations": {
-        "policy_administration": "Managing insurance policies",
-        "risk_assessment": "Evaluating property insurance risk",
-        "claims_processing": "Handling insurance claims",
-        "premium_management": "Managing premium billing and collection",
-        "coverage_administration": "Managing insurance coverage changes"
-      },
-      "property_administration": {
-        "property_preservation": "Maintaining foreclosed properties",
-        "inspection_management": "Managing property inspections",
-        "hazard_monitoring": "Tracking property condition risks",
-        "valuation_services": "Managing property valuations",
-        "tax_monitoring": "Tracking property tax status"
-      },
-      "regulatory_compliance": {
-        "lending_compliance": "Meeting lending regulations",
-        "insurance_compliance": "Following insurance regulations",
-        "reporting_compliance": "Managing regulatory reporting",
-        "consumer_protection": "Following consumer protection laws",
-        "audit_management": "Managing internal and external audits"
-      },
-      "financial_management": {
-        "cash_management": "Managing payment flows",
-        "investor_accounting": "Managing investor funds",
-        "insurance_accounting": "Managing insurance funds",
-        "fee_management": "Managing service fees",
-        "disbursement_management": "Managing payouts and refunds"
-      },
-      "customer_experience": {
-        "account_management": "Managing customer relationships",
-        "communication_management": "Managing customer communications",
-        "complaint_resolution": "Resolving customer issues",
-        "self_service": "Managing customer portals",
-        "documentation_management": "Managing customer documents"
-      },
-      "risk_management": {
-        "portfolio_risk": "Managing loan portfolio risk",
-        "insurance_risk": "Managing insurance exposure",
-        "operational_risk": "Managing business process risk",
-        "compliance_risk": "Managing regulatory risk",
-        "disaster_recovery": "Managing business continuity"
-      },
-      "vendor_management": {
-        "vendor_oversight": "Managing service providers",
-        "performance_monitoring": "Tracking vendor performance",
-        "contract_administration": "Managing vendor agreements",
-        "cost_management": "Managing vendor expenses",
-        "service_coordination": "Coordinating vendor activities"
-      },
-      "data_management": {
-        "data_quality": "Ensuring data accuracy",
-        "reporting_services": "Managing business reporting",
-        "system_integration": "Managing system interfaces",
-        "data_security": "Protecting sensitive information",
-        "records_retention": "Managing document retention"
-      },
-      "remarketing": {
-        "asset_management": {
-          "property_preservation": "Maintaining repossessed properties",
-          "valuation_services": "Determining property value",
-          "repair_management": "Managing property repairs",
-          "inspection_services": "Managing property inspections",
-          "inventory_management": "Managing property portfolio"
-        },
-        "remarketing_operations": {
-          "market_analysis": "Analyzing local market conditions",
-          "pricing_strategy": "Setting listing prices",
-          "listing_management": "Managing property listings",
-          "showing_coordination": "Managing property showings",
-          "offer_management": "Managing purchase offers"
-        },
-        "vendor_management": {
-          "broker_relations": "Managing real estate brokers",
-          "contractor_management": "Managing repair contractors",
-          "service_provider_oversight": "Managing property services",
-          "performance_monitoring": "Tracking vendor performance",
-          "cost_control": "Managing vendor expenses"
-        },
-        "compliance_management": {
-          "regulatory_compliance": "Meeting property regulations",
-          "title_management": "Managing property titles",
-          "insurance_management": "Managing property insurance",
-          "documentation_management": "Managing property records",
-          "reporting_requirements": "Managing required reporting"
-        },
-        "sales_administration": {
-          "contract_management": "Managing sales contracts",
-          "closing_coordination": "Managing property closings",
-          "funds_management": "Managing sale proceeds",
-          "buyer_qualification": "Screening potential buyers",
-          "transaction_documentation": "Managing sales records"
-        }
-      },
-      "recovery": {
-        "deficiency_recovery": {
-          "balance_calculation": "Determining remaining debt obligation",
-          "loss_analysis": "Calculating total losses after sale",
-          "recovery_strategy": "Planning collection approach",
-          "settlement_management": "Managing settlement negotiations",
-          "write_off_management": "Managing uncollectible amounts"
-        },
-        "collections_operations": {
-          "skip_tracing": "Locating former borrowers",
-          "payment_arrangements": "Managing repayment plans",
-          "legal_referrals": "Managing attorney referrals",
-          "judgment_management": "Managing court judgments",
-          "bankruptcy_monitoring": "Tracking bankruptcy status"
-        },
-        "asset_recovery": {
-          "asset_investigation": "Identifying recoverable assets",
-          "lien_management": "Managing property liens",
-          "wage_garnishment": "Managing wage attachments",
-          "tax_refund_intercept": "Managing tax refund claims",
-          "asset_seizure": "Managing asset repossession"
-        },
-        "compliance_management": {
-          "regulatory_compliance": "Meeting collection regulations",
-          "documentation_management": "Managing recovery records",
-          "statute_monitoring": "Tracking legal time limits",
-          "licensing_management": "Managing collection licenses",
-          "consumer_protection": "Following consumer laws"
-        },
-        "financial_management": {
-          "recovery_accounting": "Managing recovery funds",
-          "cost_tracking": "Managing recovery expenses",
-          "investor_reporting": "Reporting recovery results",
-          "remittance_management": "Managing recovered funds",
-          "loss_analysis": "Analyzing recovery performance"
-        }
-      }
+      "loan_servicing": {},
+      "collections_management": {},
+      "insurance_operations": {},
+      "property_administration": {},
+      "regulatory_compliance": {},
+      "financial_management": {},
+      "customer_experience": {},
+      "risk_management": {},
+      "vendor_management": {},
+      "data_management": {},
+      "remarketing": {},
+      "recovery": {}
     },
     "property_management": {
-      "property_operations": {
-        "maintenance_management": "Managing property repairs and upkeep",
-        "vendor_coordination": "Managing service providers",
-        "facilities_management": "Managing building systems and infrastructure",
-        "property_inspections": "Regular property condition assessments",
-        "emergency_response": "Managing urgent property issues"
-      },
-      "tenant_management": {
-        "lease_administration": "Managing lease agreements",
-        "tenant_screening": "Evaluating potential tenants",
-        "rent_collection": "Managing rental payments",
-        "tenant_communications": "Managing tenant relationships",
-        "complaint_resolution": "Addressing tenant issues"
-      },
-      "financial_management": {
-        "rent_accounting": "Managing rental income",
-        "expense_management": "Managing property expenses",
-        "budget_planning": "Financial planning and forecasting",
-        "reporting_services": "Financial reporting and analysis",
-        "reserve_management": "Managing maintenance reserves"
-      },
-      "compliance_management": {
-        "regulatory_compliance": "Meeting housing regulations",
-        "safety_compliance": "Meeting safety requirements",
-        "insurance_management": "Managing property insurance",
-        "documentation_management": "Managing property records",
-        "audit_management": "Managing compliance audits"
-      },
-      "occupancy_management": {
-        "vacancy_management": "Managing vacant units",
-        "marketing_management": "Property marketing activities",
-        "showing_coordination": "Managing property showings",
-        "move_in_management": "Managing tenant move-ins",
-        "move_out_management": "Managing tenant move-outs"
-      },
-      "asset_preservation": {
-        "preventive_maintenance": "Scheduled maintenance activities",
-        "capital_improvements": "Major property upgrades",
-        "property_security": "Managing property security",
-        "grounds_maintenance": "Managing landscaping and exterior",
-        "environmental_management": "Managing environmental issues"
-      },
-      "utility_management": {
-        "utility_billing": "Managing utility charges",
-        "consumption_monitoring": "Tracking utility usage",
-        "service_coordination": "Managing utility services",
-        "efficiency_programs": "Managing conservation efforts",
-        "infrastructure_management": "Managing utility systems"
-      },
-      "risk_management": {
-        "safety_management": "Managing property safety",
-        "liability_management": "Managing property liability",
-        "emergency_planning": "Disaster preparedness",
-        "security_management": "Managing security measures",
-        "insurance_coordination": "Managing insurance coverage"
-      },
-      "vendor_management": {
-        "contractor_management": "Managing service contractors",
-        "service_scheduling": "Coordinating vendor services",
-        "performance_monitoring": "Tracking vendor performance",
-        "cost_control": "Managing vendor expenses",
-        "contract_administration": "Managing vendor agreements"
-      },
-      "community_management": {
-        "amenity_management": "Managing property amenities",
-        "event_coordination": "Managing community events",
-        "rules_enforcement": "Managing community rules",
-        "resident_relations": "Managing resident community",
-        "common_area_management": "Managing shared spaces"
-      }
+      "property_operations": {},
+      "tenant_management": {},
+      "financial_management": {},
+      "compliance_management": {},
+      "occupancy_management": {},
+      "asset_preservation": {},
+      "utility_management": {},
+      "risk_management": {},
+      "vendor_management": {},
+      "community_management": {}
     },
     "human_resources": {
-      "talent_acquisition": {
-        "recruitment_management": "Managing hiring processes",
-        "candidate_screening": "Evaluating potential employees",
-        "interviewing_process": "Managing interview activities",
-        "offer_management": "Managing job offers",
-        "onboarding_coordination": "Managing new hire integration"
-      },
-      "compensation_benefits": {
-        "salary_administration": "Managing employee pay",
-        "benefits_management": "Managing employee benefits",
-        "incentive_programs": "Managing bonus and rewards",
-        "retirement_plans": "Managing retirement benefits",
-        "insurance_programs": "Managing employee insurance"
-      },
-      "employee_relations": {
-        "performance_management": "Managing employee performance",
-        "conflict_resolution": "Managing workplace disputes",
-        "disciplinary_actions": "Managing employee discipline",
-        "engagement_programs": "Managing employee engagement",
-        "workplace_culture": "Managing organizational culture"
-      },
-      "workforce_management": {
-        "staffing_planning": "Managing workforce needs",
-        "scheduling_management": "Managing work schedules",
-        "attendance_tracking": "Managing employee attendance",
-        "leave_administration": "Managing employee leave",
-        "workforce_analytics": "Analyzing workforce data"
-      },
-      "training_development": {
-        "learning_management": "Managing training programs",
-        "career_development": "Managing career growth",
-        "skills_assessment": "Evaluating employee skills",
-        "leadership_development": "Developing future leaders",
-        "certification_management": "Managing employee certifications"
-      },
-      "compliance_management": {
-        "labor_law_compliance": "Meeting employment laws",
-        "safety_compliance": "Meeting workplace safety rules",
-        "diversity_inclusion": "Managing diversity programs",
-        "policy_administration": "Managing HR policies",
-        "regulatory_reporting": "Managing compliance reporting"
-      },
-      "organizational_development": {
-        "change_management": "Managing organizational change",
-        "succession_planning": "Planning leadership succession",
-        "team_development": "Building effective teams",
-        "process_improvement": "Improving HR processes",
-        "organizational_design": "Structuring organization"
-      },
-      "payroll_administration": {
-        "wage_processing": "Processing employee pay",
-        "tax_management": "Managing payroll taxes",
-        "deduction_management": "Managing pay deductions",
-        "reporting_compliance": "Managing payroll reporting",
-        "time_tracking": "Managing work hours"
-      },
-      "employee_services": {
-        "hr_communications": "Managing HR communications",
-        "employee_support": "Providing HR assistance",
-        "records_management": "Managing employee records",
-        "relocation_services": "Managing employee moves",
-        "workplace_services": "Managing employee facilities"
-      },
-      "hr_technology": {
-        "hris_management": "Managing HR systems",
-        "data_analytics": "Analyzing HR data",
-        "systems_integration": "Managing HR tech integration",
-        "user_support": "Supporting HR tech users",
-        "security_compliance": "Protecting HR data"
-      }
+      "talent_acquisition": {},
+      "compensation_benefits": {},
+      "employee_relations": {},
+      "workforce_management": {},
+      "training_development": {},
+      "compliance_management": {},
+      "organizational_development": {},
+      "payroll_administration": {},
+      "employee_services": {},
+      "hr_technology": {}
     },
     "accounting": {
-      "general_accounting": {
-        "general_ledger": "Managing primary accounting records",
-        "journal_entries": "Recording financial transactions",
-        "account_reconciliation": "Validating account balances",
-        "chart_of_accounts": "Managing account structure",
-        "period_close": "Managing accounting cycles"
-      },
-      "accounts_payable": {
-        "vendor_management": "Managing supplier accounts",
-        "invoice_processing": "Managing incoming bills",
-        "payment_processing": "Managing vendor payments",
-        "expense_management": "Managing business expenses",
-        "purchase_orders": "Managing purchase commitments"
-      },
-      "accounts_receivable": {
-        "customer_billing": "Managing customer invoicing",
-        "payment_collection": "Managing incoming payments",
-        "credit_management": "Managing customer credit",
-        "dispute_resolution": "Managing billing disputes",
-        "cash_application": "Applying customer payments"
-      },
-      "financial_reporting": {
-        "financial_statements": "Preparing primary statements",
-        "management_reporting": "Internal financial reporting",
-        "regulatory_reporting": "External required reporting",
-        "variance_analysis": "Analyzing financial differences",
-        "performance_metrics": "Tracking financial indicators"
-      },
-      "tax_accounting": {
-        "tax_compliance": "Managing tax requirements",
-        "tax_planning": "Strategic tax management",
-        "tax_reporting": "Preparing tax filings",
-        "tax_reconciliation": "Validating tax accounts",
-        "tax_research": "Researching tax issues"
-      },
-      "cost_accounting": {
-        "cost_allocation": "Distributing business costs",
-        "product_costing": "Calculating product costs",
-        "overhead_analysis": "Managing indirect costs",
-        "profitability_analysis": "Analyzing cost effectiveness",
-        "budget_variance": "Analyzing cost differences"
-      },
-      "treasury_management": {
-        "cash_management": "Managing cash positions",
-        "banking_relations": "Managing bank relationships",
-        "investment_management": "Managing company investments",
-        "debt_management": "Managing company borrowing",
-        "risk_management": "Managing financial risks"
-      },
-      "internal_controls": {
-        "control_documentation": "Documenting control procedures",
-        "compliance_monitoring": "Monitoring control compliance",
-        "audit_support": "Supporting audit activities",
-        "fraud_prevention": "Preventing financial fraud",
-        "system_security": "Managing system access"
-      },
-      "fixed_assets": {
-        "asset_tracking": "Managing company assets",
-        "depreciation": "Managing asset depreciation",
-        "asset_disposal": "Managing asset retirement",
-        "inventory_management": "Managing asset counts",
-        "maintenance_tracking": "Managing asset maintenance"
-      },
-      "budgeting_planning": {
-        "budget_preparation": "Preparing financial budgets",
-        "forecasting": "Projecting financial results",
-        "capital_planning": "Planning capital expenses",
-        "resource_allocation": "Planning resource usage",
-        "performance_tracking": "Monitoring budget results"
-      }
+      "general_accounting": {},
+      "accounts_payable": {},
+      "accounts_receivable": {},
+      "financial_reporting": {},
+      "tax_accounting": {},
+      "cost_accounting": {},
+      "treasury_management": {},
+      "internal_controls": {},
+      "fixed_assets": {},
+      "budgeting_planning": {}
     }
   },
   "technical_domains": {
     "infrastructure_management": {
-      "system_administration": "Managing IBM i operations",
-      "performance_monitoring": "Monitoring system resources",
-      "capacity_planning": "Planning system resources",
-      "backup_recovery": "Managing system backups",
-      "disaster_recovery": "Managing system recovery"
+      "system_administration": {}
     },
     "database_management": {
-      "db2_administration": "Managing DB2 databases",
-      "data_maintenance": "Managing data integrity",
-      "query_optimization": "Optimizing database performance",
-      "file_management": "Managing physical/logical files",
-      "journal_management": "Managing database journals"
+      "db2_administration": {}
     },
     "security_administration": {
-      "user_management": "Managing user profiles",
-      "access_control": "Managing object security",
-      "audit_management": "Managing security audits",
-      "profile_management": "Managing security profiles",
-      "compliance_management": "Managing security compliance"
+      "user_management": {}
     },
     "application_support": {
-      "rpg_maintenance": "Managing RPG applications",
-      "cobol_maintenance": "Managing COBOL applications",
-      "cl_programming": "Managing CL programs",
-      "job_scheduling": "Managing system jobs",
-      "program_testing": "Testing application changes"
+      "rpg_maintenance": {}
     },
     "network_services": {
-      "communications_management": "Managing communications",
-      "connectivity_support": "Managing system access",
-      "tcp_ip_administration": "Managing TCP/IP services",
-      "remote_access": "Managing remote connectivity",
-      "network_security": "Managing network security"
+      "communications_management": {}
     },
     "storage_management": {
-      "disk_management": "Managing storage space",
-      "asp_administration": "Managing auxiliary storage",
-      "tape_management": "Managing tape systems",
-      "storage_monitoring": "Monitoring storage usage",
-      "archival_services": "Managing data archives"
+      "disk_management": {}
     },
     "change_management": {
-      "version_control": "Managing source versions",
-      "deployment_management": "Managing system deployments",
-      "patch_management": "Managing system updates",
-      "library_management": "Managing system libraries",
-      "environment_control": "Managing system environments"
+      "version_control": {}
     },
     "operations_support": {
-      "batch_processing": "Managing batch operations",
-      "print_management": "Managing print operations",
-      "message_management": "Managing system messages",
-      "subsystem_management": "Managing subsystems",
-      "job_management": "Managing system jobs"
+      "batch_processing": {}
     },
     "integration_services": {
-      "api_management": "Managing system interfaces",
-      "file_transfer": "Managing data transfers",
-      "web_services": "Managing web interfaces",
-      "middleware_support": "Managing system middleware",
-      "interface_monitoring": "Monitoring integrations"
+      "api_management": {}
     },
     "technical_support": {
-      "problem_management": "Managing system issues",
-      "incident_response": "Handling system incidents",
-      "documentation_management": "Managing system documentation",
-      "vendor_coordination": "Managing vendor support",
-      "user_support": "Supporting system users"
+      "problem_management": {}
     }
   }
 }

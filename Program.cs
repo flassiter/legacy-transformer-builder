@@ -7,12 +7,53 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace legacy_transformer_builder
+namespace LegacyTransformerBuilder
 {
-
-    public class Builder
+    public class Program
     {
         public static async Task Main(string[] args)
+        {
+            try
+            {
+                // Initialize app configuration and settings
+                var config = ConfigurationManager.Initialize();
+
+                // Ensure directories exist
+                DirectoryManager.EnsureDirectoriesExist(config);
+
+                // Read enterprise domains JSON
+                string enterpriseDomainsJSON = await File.ReadAllTextAsync(config.EnterpriseDomainsJSON);
+
+                // Process all files
+                var fileProcessor = new FileProcessor(config, enterpriseDomainsJSON);
+                await fileProcessor.ProcessAllFiles();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Critical application error: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
+        }
+    }
+
+    #region Configuration
+
+    public class AppConfiguration
+    {
+        public string SourceFolderPath { get; set; }
+        public string OutputFolderPath { get; set; }
+        public string ArchiveFolderPath { get; set; }
+        public string EnterpriseDomainsJSON { get; set; }
+        public string ModelPrompt { get; set; }
+        public string ModelId { get; set; }
+        public string AwsProfile { get; set; }
+        public string AwsRegion { get; set; }
+        public int MaxTokens { get; set; }
+    }
+
+    public static class ConfigurationManager
+    {
+        public static AppConfiguration Initialize()
         {
             // Build configuration with fallback options
             var configuration = new ConfigurationBuilder()
@@ -21,25 +62,36 @@ namespace legacy_transformer_builder
                 .AddEnvironmentVariables() // Fallback to environment variables
                 .Build();
 
-            // Access configuration values with defaults
-            string sourceFolderPath = configuration["SourceFolderPath"] ?? "./source";
-            string outputFolderPath = configuration["OutputFolderPath"] ?? "./output";
-            string archiveFolderPath = configuration["ArchiveFolderPath"] ?? "./archive";
-            string enterpriseDomainsJSON = configuration["EnterpriseDomainsJSON"] ?? "enterpriseDomains.json";
-            string modelPrompt = configuration["ModelPrompt"] ?? "Analyze this code and provide a detailed report:";
+            var config = new AppConfiguration
+            {
+                SourceFolderPath = configuration["SourceFolderPath"] ?? "./source",
+                OutputFolderPath = configuration["OutputFolderPath"] ?? "./output",
+                ArchiveFolderPath = configuration["ArchiveFolderPath"] ?? "./archive",
+                EnterpriseDomainsJSON = configuration["EnterpriseDomainsJSON"] ?? "enterpriseDomains.json",
+                ModelPrompt = configuration["ModelPrompt"] ?? "Analyze this code and provide a detailed report:",
+                ModelId = configuration["ModelId"] ?? "anthropic.claude-v2",
+                AwsProfile = configuration["AwsProfile"] ?? "innovate",
+                AwsRegion = configuration["AwsRegion"] ?? "us-east-1",
+                MaxTokens = int.Parse(configuration["MaxTokens"] ?? "4000")
+            };
 
             // Log configuration values for debugging
-            Console.WriteLine($"Using source folder: {sourceFolderPath}");
-            Console.WriteLine($"Using output folder: {outputFolderPath}");
-            Console.WriteLine($"Using archive folder: {archiveFolderPath}");
+            Console.WriteLine($"Using source folder: {config.SourceFolderPath}");
+            Console.WriteLine($"Using output folder: {config.OutputFolderPath}");
+            Console.WriteLine($"Using archive folder: {config.ArchiveFolderPath}");
+            Console.WriteLine($"Using model: {config.ModelId}");
 
-            EnsureDirectoryExists(outputFolderPath);
-            EnsureDirectoryExists(archiveFolderPath);
+            return config;
+        }
+    }
 
-            // Read domains for model prompt
-            string enterpriseDomainsJSONString = await File.ReadAllTextAsync(enterpriseDomainsJSON);
-
-            await ProcessFiles(sourceFolderPath, outputFolderPath, archiveFolderPath, modelPrompt, enterpriseDomainsJSONString);
+    public static class DirectoryManager
+    {
+        public static void EnsureDirectoriesExist(AppConfiguration config)
+        {
+            EnsureDirectoryExists(config.SourceFolderPath);
+            EnsureDirectoryExists(config.OutputFolderPath);
+            EnsureDirectoryExists(config.ArchiveFolderPath);
         }
 
         private static void EnsureDirectoryExists(string path)
@@ -47,106 +99,86 @@ namespace legacy_transformer_builder
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
+                Console.WriteLine($"Created directory: {path}");
             }
         }
+    }
 
-        private static async Task ProcessFiles(string sourceFolderPath, string outputFolderPath, string archiveFolderPath, string modelPrompt, string enterpriseDomainsJSONString)
+    #endregion
+
+    #region File Processing
+
+    public class FileProcessor
+    {
+        private readonly AppConfiguration _config;
+        private readonly string _enterpriseDomainsJSON;
+        private readonly BedrockClient _bedrockClient;
+
+        public FileProcessor(AppConfiguration config, string enterpriseDomainsJSON)
         {
-            string[] files = Directory.GetFiles(sourceFolderPath);
+            _config = config;
+            _enterpriseDomainsJSON = enterpriseDomainsJSON;
+            _bedrockClient = new BedrockClient(config);
+        }
+
+        public async Task ProcessAllFiles()
+        {
+            string[] files = Directory.GetFiles(_config.SourceFolderPath);
             Console.WriteLine($"Found {files.Length} files to process");
 
             foreach (string filePath in files)
             {
-                await ProcessFile(filePath, outputFolderPath, archiveFolderPath, modelPrompt, enterpriseDomainsJSONString);
+                await ProcessSingleFile(filePath);
             }
         }
 
-        private static async Task ProcessFile(string filePath, string outputFolderPath, string archiveFolderPath, string modelPrompt, string enterpriseDomainsJSONString)
+        private async Task ProcessSingleFile(string filePath)
         {
             string fileName = Path.GetFileName(filePath);
-            string outputFilePath = Path.Combine(outputFolderPath, Path.GetFileNameWithoutExtension(fileName) + ".json");
-            string archiveFilePath = Path.Combine(archiveFolderPath, fileName);
+            string outputFilePath = Path.Combine(_config.OutputFolderPath, Path.GetFileNameWithoutExtension(fileName) + ".json");
+            string archiveFilePath = Path.Combine(_config.ArchiveFolderPath, fileName);
 
             try
             {
-
-                // -- Read and deserialize the source file
                 Console.WriteLine($"Processing file: {filePath}");
+
+                // Read and deserialize the source file
                 string requestFileString = await File.ReadAllTextAsync(filePath);
-
-                // -- Build prompt
                 AnalysisRequest analysisRequest = JsonConvert.DeserializeObject<AnalysisRequest>(requestFileString);
-                analysisRequest.EnterpriseDomainsJSON = enterpriseDomainsJSONString;
-                var analysisRequestString = JsonConvert.SerializeObject(analysisRequest);
-                modelPrompt = modelPrompt + "//n//n" + analysisRequestString + "//n//n";
+                analysisRequest.EnterpriseDomainsJSON = _enterpriseDomainsJSON;
 
-                // -- Connect to AWS Bedrock
-                var credentials = new StoredProfileAWSCredentials("innovate");
-                var config = new AmazonBedrockRuntimeConfig
+                // Get analysis from LLM
+                string analysisText = await _bedrockClient.GetAnalysisFromLLM(analysisRequest, _config.ModelPrompt);
+                Console.WriteLine($"Response from Bedrock: ", analysisText);
+
+                // Extract and parse the response
+                //string extractedJsonString = JsonExtractor.ExtractJsonString(analysisText);
+                if (string.IsNullOrEmpty(analysisText))
                 {
-                    RegionEndpoint = RegionEndpoint.USEast1
-                };
-
-                using var client = new AmazonBedrockRuntimeClient(credentials, config);
-
-                // -- Prepare the request
-                var requestBody = new
-                {
-                    anthropic_version = "bedrock-2023-05-31",
-                    max_tokens = 4000,
-                    messages = new[]
-                    {
-                    new
-                    {
-                        role = "user",
-                        content = modelPrompt
-                    }
+                    throw new InvalidOperationException("Failed to receive valid JSON from the LLM response");
                 }
-                };
 
-                string requestJSONString = JsonConvert.SerializeObject(requestBody);
-                using var requestJSONStream = new MemoryStream(Encoding.UTF8.GetBytes(requestJSONString));
+                AnalysisResponse analysisResponse = JsonConvert.DeserializeObject<AnalysisResponse>(analysisText);
 
-                // -- Submit the request to AWS Bedrock
-                var request = new InvokeModelRequest
-                {
-                    ModelId = "anthropic.claude-v2",
-                    Body = requestJSONStream,
-                    ContentType = "application/json",
-                    Accept = "application/json"
-                };
-
-                Console.WriteLine("Sending request to Bedrock...");
-                InvokeModelResponse response = await client.InvokeModelAsync(request);
-
-                // -- Receive and parse response from Bedrock
-                string responseBodyJson = new StreamReader(response.Body).ReadToEnd();
-                BedrockResponse bedrockResponse = JsonConvert.DeserializeObject<BedrockResponse>(responseBodyJson);
-                string analysisText = bedrockResponse.Content[0].Text;
-
-                var extractedJsonString = ExtractJsonString(analysisText);
-                AnalysisResponse analysisResponse = JsonConvert.DeserializeObject<AnalysisResponse>(extractedJsonString);
-
-
-                // -- Create output response
+                // Create and save output
                 var output = new Output
                 {
-                    ObjectName = analysisResponse.ObjectName,
-                    ObjectType = analysisResponse.ObjectType,
-                    LevelOneDomain = analysisResponse.LevelOneDomain,
-                    LevelTwoDomain = analysisResponse.LevelTwoDomain,
-                    Documentation = analysisResponse.Documentation.Description
-
+                    ObjectName = analysisResponse.objectName,
+                    ObjectType = analysisResponse.objectType,
+                    LevelOneDomain = analysisResponse.levelOneDomain,
+                    LevelTwoDomain = analysisResponse.levelTwoDomain,
+                    Documentation = analysisResponse.documentation.programDescription
                 };
 
                 string outputJsonString = JsonConvert.SerializeObject(output, new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented
                 });
+
                 await File.WriteAllTextAsync(outputFilePath, outputJsonString);
                 Console.WriteLine($"LLM output written to: {outputFilePath}");
 
-                // 10. Move the processed file to the archive
+                // Move the processed file to archive
                 File.Move(filePath, archiveFilePath, overwrite: true);
                 Console.WriteLine($"File moved to archive: {archiveFilePath}");
             }
@@ -157,9 +189,106 @@ namespace legacy_transformer_builder
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
             }
         }
+    }
 
+    #endregion
+
+    #region Bedrock Integration
+
+    public class BedrockClient
+    {
+        private readonly AmazonBedrockRuntimeClient _client;
+        private readonly AppConfiguration _config;
+
+        public BedrockClient(AppConfiguration config)
+        {
+            _config = config;
+
+            RegionEndpoint region = null;
+            if (!string.IsNullOrEmpty(config.AwsRegion))
+            {
+                region = RegionEndpoint.GetBySystemName(config.AwsRegion);
+            }
+
+            var credentials = new StoredProfileAWSCredentials(config.AwsProfile);
+            var clientConfig = new AmazonBedrockRuntimeConfig
+            {
+                RegionEndpoint = region ?? RegionEndpoint.USEast1
+            };
+
+            _client = new AmazonBedrockRuntimeClient(credentials, clientConfig);
+        }
+
+        public async Task<string> GetAnalysisFromLLM(AnalysisRequest analysisRequest, string modelPrompt)
+        {
+            // Build full prompt
+            var analysisRequestString = JsonConvert.SerializeObject(analysisRequest);
+            var fullPrompt = $"{modelPrompt}\n\n{analysisRequestString}\n\n";
+
+            // Prepare the request body
+            
+            var requestBody = new
+            {
+                anthropic_version = "bedrock-2023-05-31",
+                max_tokens = _config.MaxTokens,
+                top_k = 250,
+                stop_sequences = new string[] { },
+                temperature = 1,
+                top_p = 0.999,
+                messages = new[]
+            {
+                    new
+                    {
+                        role = "user",
+                        content = new[]
+                        {
+                            new { type = "text", text = fullPrompt }
+                        }
+                    }
+                }
+            };
+
+            string requestJSONString = JsonConvert.SerializeObject(requestBody);
+            using var requestJSONStream = new MemoryStream(Encoding.UTF8.GetBytes(requestJSONString));
+
+            // Create API request
+            var request = new InvokeModelRequest
+            {
+                ModelId = "anthropic.claude-3-5-sonnet-20240620-v1:0",
+                ContentType = "application/json",
+                Accept = "application/json",
+                Body = requestJSONStream
+            };
+
+            Console.WriteLine("Sending request to Bedrock...");
+            InvokeModelResponse response = await _client.InvokeModelAsync(request);
+
+            // Parse the response
+            string responseBodyJson = new StreamReader(response.Body).ReadToEnd();
+            BedrockResponse bedrockResponse = JsonConvert.DeserializeObject<BedrockResponse>(responseBodyJson);
+
+            if (bedrockResponse?.Content == null || bedrockResponse.Content.Count == 0)
+            {
+                throw new InvalidOperationException("Received empty or invalid response from Bedrock");
+            }
+
+            return bedrockResponse.Content[0].Text;
+        }
+    }
+
+    #endregion
+
+    #region Utilities
+
+    public static class JsonExtractor
+    {
         public static string ExtractJsonString(string text)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                return null;
+            }
+
             // Use a regular expression to find the JSON within a code block or directly
             string jsonPattern = @"```json\s*({[\s\S]*?})\s*```|({[\s\S]*?})";
             Match match = Regex.Match(text, jsonPattern);
@@ -176,4 +305,113 @@ namespace legacy_transformer_builder
             return null;
         }
     }
+
+    #endregion
+
+    #region Models
+
+    public class Usage
+    {
+        public int InputTokens { get; set; }
+        public int OutputTokens { get; set; }
+    }
+
+    public class Metadata
+    {
+        public string? ObjectName { get; set; }
+        public string? ObjectType { get; set; }
+        public string? ObjectAttribute { get; set; }
+        public string? ObjectFamily { get; set; }
+        public string? ObjectDescription { get; set; }
+        public DateTime ObjectFirstDefined { get; set; }
+        public DateTime ObjectLastTouched { get; set; }
+        public int ObjectDependencyCount { get; set; }
+        public int ObjectReferencedByCount { get; set; }
+    }
+
+    public class AnalysisRequest
+    {
+        public required Metadata Metadata { get; set; }
+        public required string SourceCode { get; set; }
+        public string EnterpriseDomainsJSON { get; set; }
+    }
+
+    public class AnalysisResponse
+    {
+        public string objectName { get; set; }
+        public string objectType { get; set; }
+        public string levelOneDomain { get; set; }
+        public string levelTwoDomain { get; set; }
+        public Documentation documentation { get; set; }
+    }
+
+    public class Documentation
+    {
+        public string programDescription { get; set; }
+        public string businessPurpose { get; set; }
+        public List<string> keyFunctionality { get; set; }
+        public List<string> inputParameters { get; set; }
+        public List<string> outputParameters { get; set; }
+        public ScreenDetails screenDetails { get; set; }
+        public List<string> programFlow { get; set; }
+        public string errorHandling { get; set; }
+        public string integrationPoints { get; set; }
+        public string maintenanceConsiderations { get; set; }
+    }
+
+    public class ScreenDetails
+    {
+        public string screenName { get; set; }
+        public List<string> fields { get; set; }
+        public List<string> validationRules { get; set; }
+    }
+
+    public class Action
+    {
+        public string Type { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class Parameter
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Description { get; set; }
+        public string DefaultValue { get; set; }
+    }
+
+    public class Message
+    {
+        public string MessageId { get; set; }
+        public string Description { get; set; }
+    }
+
+    public class Content
+    {
+        public string? Type { get; set; }
+        public string? Text { get; set; }
+    }
+
+    public class BedrockResponse
+    {
+        public string? Id { get; set; }
+        public string? Type { get; set; }
+        public string? Role { get; set; }
+        public string? Model { get; set; }
+        public List<Content>? Content { get; set; }
+        public string? StopReason { get; set; }
+        public object? StopSequence { get; set; }
+        public Usage? Usage { get; set; }
+    }
+
+    public class Output
+    {
+        public string ObjectName { get; set; }
+        public string ObjectType { get; set; }
+        public string LevelOneDomain { get; set; }
+        public string LevelTwoDomain { get; set; }
+        public string Documentation { get; set; }
+    }
+
+    #endregion
 }
